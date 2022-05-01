@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse, redirect, get_object_or_404
+from django.shortcuts import render, reverse, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment
 from django.contrib.auth.models import User
@@ -97,12 +97,6 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(Comment, pk=self.kwargs.get('comment_pk'))
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.username
-        form.instance.post_id = self.kwargs.get('pk')
-        form.instance.parent_id = self.kwargs.get('comment_pk')
-        return super().form_valid(form)
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')
