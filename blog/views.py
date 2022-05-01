@@ -1,6 +1,7 @@
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment
+from django.contrib.auth.models import User
 from django.views.generic import (
     ListView,
     DetailView,
@@ -13,9 +14,21 @@ from .forms import CommentForm
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html'  # или будет искать <app>/<model>_<viewtype>.html
+    template_name = 'blog/index.html'  # или будет искать <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-date_posted']
+    paginate_by = 5
+
+
+class UserPostListView(ListView):
+    model = Post
+    template_name = 'blog/user_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 1
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=user).order_by('-date_posted')
 
 
 class PostDetailView(DetailView):
@@ -34,6 +47,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
+    template_name = "blog/post_update_form.html"
 
     # need to be logged in order to update post
     def form_valid(self, form):
@@ -62,31 +76,36 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = "blog/comment_form.html"
 
     def form_valid(self, form):
-        form.instance.post_id = self.kwargs['pk']  # this is line sets post_id with pk from url
+        form.instance.post_id = self.kwargs.get('pk')  # this is line sets post_id with pk from url
         form.instance.author = self.request.user  # in case you need to display author
         return super().form_valid(form)
 
     # returns url where you 'll be redirected after the form is correctly filled
     def get_success_url(self):
-        pk = self.kwargs["pk"]
+        pk = self.kwargs.get('pk')
         return reverse("post-detail", kwargs={"pk": pk})
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
-
-    def form_valid(self, form):
-        form.instance.post_id = self.kwargs['comment_pk']
-        form.instance.author = self.request.user.username
-        return super().form_valid(form)
+    template_name = "blog/comment_update_form.html"
 
     def test_func(self):
         comment = self.get_object()
         return self.request.user.username == comment.author
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(Comment, pk=self.kwargs.get('comment_pk'))
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.username
+        form.instance.post_id = self.kwargs.get('pk')
+        form.instance.parent_id = self.kwargs.get('comment_pk')
+        return super().form_valid(form)
+
     def get_success_url(self):
-        pk = self.kwargs['comment_pk']
+        pk = self.kwargs.get('pk')
         return reverse("post-detail", kwargs={"pk": pk})
 
 
@@ -97,8 +116,11 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         comment = self.get_object()
         return self.request.user.username == comment.author
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(Comment, pk=self.kwargs.get('comment_pk'))
+
     def get_success_url(self):
-        pk = self.kwargs['comment_pk']
+        pk = self.kwargs.get('pk')
         return reverse("post-detail", kwargs={"pk": pk})
 
 
@@ -109,12 +131,12 @@ class CommentReplyView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user.username
-        form.instance.post_id = self.kwargs['pk']
-        form.instance.parent_id = self.kwargs['comment_pk']
+        form.instance.post_id = self.kwargs.get('pk')
+        form.instance.parent_id = self.kwargs.get('comment_pk')
         return super().form_valid(form)
 
     def get_success_url(self):
-        pk = self.kwargs['pk']
+        pk = self.kwargs.get('pk')
         return reverse("post-detail", kwargs={"pk": pk})
 
 
