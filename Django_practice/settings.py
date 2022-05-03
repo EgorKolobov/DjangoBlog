@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-9*gpinp81n3t+71l=@-7s-_x5p&624n7$4c6=46%z!q$m$w-=j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 # Application definition
 
@@ -116,12 +120,19 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # path for uploaded files. They are stored on filesystem, not on database
-MEDIA_URL = '/media/' # public url of MEDIA_ROOT. This is how we can access it from the browser
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # path for uploaded files. They are stored on filesystem, not on database
+MEDIA_URL = '/media/'  # public url of MEDIA_ROOT. This is how we can access it from the browser
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')  # os.environ.get('EMAIL_USER')  # your gmail
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')  # os.environ.get('EMAIL_PASS')  # your app password (https://myaccount.google.com/apppasswords)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
