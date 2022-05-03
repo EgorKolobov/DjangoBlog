@@ -17,14 +17,14 @@ class PostListView(ListView):
     template_name = 'blog/index.html'  # или будет искать <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-date_posted']
-    paginate_by = 5
+    paginate_by = 4
 
 
 class UserPostListView(ListView):
     model = Post
     template_name = 'blog/user_posts.html'
     context_object_name = 'posts'
-    paginate_by = 1
+    paginate_by = 2
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
@@ -135,4 +135,7 @@ class CommentReplyView(LoginRequiredMixin, CreateView):
 
 
 def about(request):
-    return render(request, 'blog/about.html', {'title': "About"})
+    # from Django_practice.settings import EMAIL_HOST_USER
+    # title=EMAIL_HOST_USER
+    title="About"
+    return render(request, 'blog/about.html', {'title': title})
