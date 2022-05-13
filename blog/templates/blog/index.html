@@ -40,15 +40,20 @@
 {% endblock content %}
 
 {% block sidebar %}
-    <div class="content-section">
-        <h3>Sample Sidebar</h3>
-        <p class='text-muted'>Hello there!
-        <ul class="list-group">
-            <li class="list-group-item list-group-item-light">Latest Posts</li>
-            <li class="list-group-item list-group-item-light">Announcements</li>
-            <li class="list-group-item list-group-item-light">my github</li>
-            <li class="list-group-item list-group-item-light">etc</li>
-        </ul>
-        </p>
+    <div class="col-md-4">
+        <div class="content-section">
+            <h3>Sidebar</h3>
+            <p class='text-muted'>Hello there!
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-light"><a href="https://github.com/EgorKolobov">My github</a>
+                </li>
+                <li class="list-group-item list-group-item-light"><a
+                        href="https://app.codesignal.com/profile/egor_kolobov">My CodeSignal</a></li>
+                <li class="list-group-item list-group-item-light"><a href="https://t.me/EgorKolobov">My Telegram</a>
+                </li>
+                <li class="list-group-item list-group-item-light"><a href="https://vk.com/eg0r_kolobov">My VK</a></li>
+            </ul>
+            </p>
+        </div>
     </div>
 {% endblock %}

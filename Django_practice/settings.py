@@ -15,7 +15,6 @@ import os
 import environ
 import django_on_heroku
 
-
 env = environ.Env()
 environ.Env.read_env()
 
@@ -31,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str(os.environ.get('DEBUG')) == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost', 'egors-djangoblog.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'egors-djangoblog.herokuapp.com']
 
 # Application definition
 
@@ -45,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -133,8 +133,22 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') # env('EMAIL_HOST_USER') # your host mail
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') # env('EMAIL_HOST_PASSWORD') # your app password (https://myaccount.google.com/apppasswords)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # your host mail
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')  # app password (https://myaccount.google.com/apppasswords)
+
+# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# ----Yandex s3----
+DEFAULT_FILE_STORAGE = 'yandex_s3_storage.ClientDocsStorage'  # path to file we created before
+YANDEX_CLIENT_DOCS_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_S3_ENDPOINT_URL = 'https://storage.yandexcloud.net'
+AWS_S3_REGION_NAME = 'storage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

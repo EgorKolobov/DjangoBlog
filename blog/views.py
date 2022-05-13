@@ -18,6 +18,7 @@ class PostListView(ListView):
     context_object_name = 'posts'
     ordering = ['-date_posted']
     paginate_by = 4
+    extra_context = {'title': 'All posts'}
 
 
 class UserPostListView(ListView):
@@ -25,6 +26,7 @@ class UserPostListView(ListView):
     template_name = 'blog/user_posts.html'
     context_object_name = 'posts'
     paginate_by = 2
+    extra_context = {'title': 'User\'s posts'}
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
@@ -33,6 +35,7 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+    extra_context = {'title': 'Post\'s details'}
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -135,7 +138,4 @@ class CommentReplyView(LoginRequiredMixin, CreateView):
 
 
 def about(request):
-    # from Django_practice.settings import EMAIL_HOST_USER
-    # title=EMAIL_HOST_USER
-    title="About"
-    return render(request, 'blog/about.html', {'title': title})
+    return render(request, 'blog/about.html', {'title': 'About'})
